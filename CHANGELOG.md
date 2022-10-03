@@ -11,4 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bon2Task for use BON2 in Gradle.
 
-[unreleased]: https://github.com/MJaroslav/MCInGameTester/compare/9e79296...HEAD
+[unreleased]: https://github.com/MJaroslav/Bon2Gradle/compare/9e79296...HEAD
