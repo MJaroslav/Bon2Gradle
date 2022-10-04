@@ -28,7 +28,7 @@ class Bon2GradlePluginFunctionalTest {
     }
 
     @Test
-    void canRunTask() throws IOException {
+    void test$canRunTask() throws IOException {
         val runner = GradleRunner.create();
         runner.withPluginClasspath();
         writeString(getSettingsFile(), "");

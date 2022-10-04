@@ -1,4 +1,4 @@
-package com.github.mjaroslav.bon2gradle;
+package com.github.mjaroslav.bon2gradle.task;
 
 import com.github.mjaroslav.bon2gradle.util.MappingUtils;
 import com.github.parker8283.bon2.BON2Impl;

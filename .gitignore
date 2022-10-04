@@ -12,6 +12,8 @@
 *.ear
 *.nar
 hs_err_pid*
+# Jars in resources
+!src/*/resources/**/*.jar
 
 ##############################
 ## Maven
