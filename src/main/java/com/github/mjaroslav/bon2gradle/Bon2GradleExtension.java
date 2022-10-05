@@ -11,7 +11,7 @@ import java.io.File;
 
 @Getter
 @Setter
-public final class Bon2GradleExtension {
+public class Bon2GradleExtension {
     private boolean forceMapping;
 
     @Nullable

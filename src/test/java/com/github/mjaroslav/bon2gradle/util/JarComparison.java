@@ -44,7 +44,7 @@ public class JarComparison {
             Assertions.assertNotNull(changedNode, "Should load changed node");
 
             for (var outer : expectedNode.fields) {
-                boolean found = false;
+                var found = false;
                 for (var inner : changedNode.fields)
                     if (key(inner).equals(key(outer))) {
                         found = true;
@@ -54,7 +54,7 @@ public class JarComparison {
             }
 
             for (var outer : expectedNode.methods) {
-                boolean found = false;
+                var found = false;
                 for (var inner : changedNode.methods)
                     if (key(inner).equals(key(outer))) {
                         found = true;
