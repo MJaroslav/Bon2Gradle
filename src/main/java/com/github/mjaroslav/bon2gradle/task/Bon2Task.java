@@ -5,32 +5,29 @@ import com.github.parker8283.bon2.BON2Impl;
 import com.github.parker8283.bon2.cli.CLIErrorHandler;
 import com.github.parker8283.bon2.cli.CLIProgressListener;
 import com.github.parker8283.bon2.data.MappingVersion;
-import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraftforge.gradle.tasks.abstractutil.CachedTask;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.*;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.File;
 import java.io.IOException;
 
 @Setter
-public class Bon2Task extends CachedTask {
+@Getter
+public class Bon2Task extends DefaultTask {
     @InputFile
-    @Cached
-    private Closure<File> from;
+    private File from;
 
     @OutputFile
-    @Cached
-    private Closure<File> to;
+    private File to;
 
     @InputFile
     @Optional
-    private Closure<File> mappings;
+    private File mappings;
 
     @Input
-    @Optional
-    @Getter
     private String mappingsRelativeConfPath;
 
     @TaskAction
@@ -38,20 +35,9 @@ public class Bon2Task extends CachedTask {
         BON2Impl.remap(getFrom(), getTo(), getMappingVersion(), new CLIErrorHandler(), new CLIProgressListener());
     }
 
-    public File getFrom() {
-        return from.call();
-    }
-
-    public File getTo() {
-        return to.call();
-    }
-
-    public File getMappings() {
-        return mappings.call();
-    }
-
+    @UnknownNullability
     private MappingVersion getMappingVersion() {
-        if (mappings == null) return MappingUtils.getApiMapping(getProject());
+        if (mappings == null) return MappingUtils.getCurrentMapping(getProject());
         else return MappingUtils.getMapping(getMappings(), getMappingsRelativeConfPath());
     }
 }

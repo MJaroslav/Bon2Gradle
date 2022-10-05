@@ -1,6 +1,5 @@
 package com.github.mjaroslav.bon2gradle.task;
 
-import com.github.mjaroslav.bon2gradle.util.FileClosure;
 import com.github.mjaroslav.bon2gradle.util.JarComparison;
 import com.github.mjaroslav.bon2gradle.util.TestUtils;
 import lombok.val;
@@ -55,9 +54,9 @@ class Bon2TaskTest {
         TestUtils.copyFromResources("/com/github/mjaroslav/bon2gradle/task/Bon2TaskMethods.csv", getMethodsCsv());
         TestUtils.copyFromResources("/com/github/mjaroslav/bon2gradle/task/Bon2TaskFields.csv", getFieldsCsv());
 
-        task.setFrom(new FileClosure(task, getObfuscatedJar()));
-        task.setTo(new FileClosure(task, getDeobfuscatedActualJar()));
-        task.setMappings(new FileClosure(project, projectDir));
+        task.setFrom(getObfuscatedJar());
+        task.setTo(getDeobfuscatedActualJar());
+        task.setMappings(projectDir);
         task.setMappingsRelativeConfPath(".");
         task.doTask();
 
