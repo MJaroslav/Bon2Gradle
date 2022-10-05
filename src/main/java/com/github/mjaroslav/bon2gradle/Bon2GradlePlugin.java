@@ -9,7 +9,7 @@ public final class Bon2GradlePlugin implements Plugin<Project> {
     public void apply(@NotNull Project project) {
         project.afterEvaluate(project1 -> {
             if (project1.getState().getFailure() != null) return;
-            project.getExtensions().create(Bon2GradleConstants.EXTENSION_NAME, Bon2GradleExtension.class, this);
+            project.getExtensions().create(Bon2GradleConstants.EXTENSION_NAME, Bon2GradleExtension.class);
         });
     }
 }
