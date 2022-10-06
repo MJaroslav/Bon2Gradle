@@ -7,10 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+@FunctionalInterface
 public interface MappingProvider {
     @Nullable MappingVersion getCurrentMappings(@NotNull Project project, @NotNull File cacheDir);
-
-    default boolean isShouldCreateCacheDir() {
-        return false;
-    }
 }

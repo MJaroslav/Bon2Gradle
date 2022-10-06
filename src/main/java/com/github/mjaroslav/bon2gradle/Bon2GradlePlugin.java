@@ -4,7 +4,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;
 
-public final class Bon2GradlePlugin implements Plugin<Project> {
+public abstract class Bon2GradlePlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {
         project.afterEvaluate(project1 -> {

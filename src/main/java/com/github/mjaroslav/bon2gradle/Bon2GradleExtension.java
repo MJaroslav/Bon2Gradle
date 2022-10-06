@@ -1,33 +1,31 @@
 package com.github.mjaroslav.bon2gradle;
 
 import com.github.mjaroslav.bon2gradle.api.MappingProvider;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Internal;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+public abstract class Bon2GradleExtension {
+    public abstract Property<Boolean> getForceMapping();
 
-@Getter
-@Setter
-public class Bon2GradleExtension {
-    private boolean forceMapping;
+    public abstract RegularFileProperty getForcedMappingLocations();
 
-    @Nullable
-    private File forcedMappingLocations;
+    public abstract Property<String> getForcedMappingRelativeConfPath();
 
-    @Nullable
-    private String forcedMappingRelativeConfPath;
+    public abstract Property<String> getMappingProvider();
 
-    @Nullable
-    private String mappingProvider = "com.github.mjaroslav.bon2gradle.api.impl.FG12Provider";
+    public Bon2GradleExtension() {
+        getForceMapping().convention(false);
+        getMappingProvider().convention("com.github.mjaroslav.bon2gradle.api.impl.FG12Provider");
+    }
 
     @Internal
     @Nullable
     public MappingProvider getMappingProviderObject() {
         try {
-            val clazz = Class.forName(mappingProvider);
+            val clazz = Class.forName(getMappingProvider().get());
             return (MappingProvider) clazz.getConstructor().newInstance();
         } catch (Exception e) {
             return null;

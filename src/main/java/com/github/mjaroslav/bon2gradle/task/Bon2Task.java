@@ -5,39 +5,39 @@ import com.github.parker8283.bon2.BON2Impl;
 import com.github.parker8283.bon2.cli.CLIErrorHandler;
 import com.github.parker8283.bon2.cli.CLIProgressListener;
 import com.github.parker8283.bon2.data.MappingVersion;
-import lombok.Getter;
-import lombok.Setter;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.jetbrains.annotations.UnknownNullability;
 
-import java.io.File;
 import java.io.IOException;
 
-@Setter
-@Getter
-public class Bon2Task extends DefaultTask {
+public abstract class Bon2Task extends DefaultTask {
     @InputFile
-    private File from;
+    public abstract RegularFileProperty getFrom();
 
     @OutputFile
-    private File to;
+    public abstract RegularFileProperty getTo();
 
     @InputFile
     @Optional
-    private File mappings;
+    public abstract RegularFileProperty getMapping();
 
     @Input
-    private String mappingsRelativeConfPath;
+    @Optional
+    public abstract Property<String> getMappingsRelativeConfPath();
 
     @TaskAction
     public void doTask() throws IOException {
-        BON2Impl.remap(getFrom(), getTo(), getMappingVersion(), new CLIErrorHandler(), new CLIProgressListener());
+        BON2Impl.remap(getFrom().get().getAsFile(), getTo().get().getAsFile(), getMappingVersion(),
+            new CLIErrorHandler(), new CLIProgressListener());
     }
 
     @UnknownNullability
-    private MappingVersion getMappingVersion() {
-        if (mappings == null) return MappingUtils.getCurrentMapping(getProject());
-        else return MappingUtils.getMapping(getMappings(), getMappingsRelativeConfPath());
+    @Internal
+    MappingVersion getMappingVersion() {
+        if (!getMapping().isPresent()) return MappingUtils.getCurrentMapping(getProject());
+        else return MappingUtils.getMapping(getMapping().get().getAsFile(), getMappingsRelativeConfPath().get());
     }
 }

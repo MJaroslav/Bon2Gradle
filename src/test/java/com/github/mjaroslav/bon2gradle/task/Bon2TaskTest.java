@@ -54,10 +54,10 @@ class Bon2TaskTest {
         TestUtils.copyFromResources("/com/github/mjaroslav/bon2gradle/task/Bon2TaskMethods.csv", getMethodsCsv());
         TestUtils.copyFromResources("/com/github/mjaroslav/bon2gradle/task/Bon2TaskFields.csv", getFieldsCsv());
 
-        task.setFrom(getObfuscatedJar());
-        task.setTo(getDeobfuscatedActualJar());
-        task.setMappings(projectDir);
-        task.setMappingsRelativeConfPath(".");
+        task.getFrom().set(getObfuscatedJar());
+        task.getTo().set(getDeobfuscatedActualJar());
+        task.getMapping().set(projectDir);
+        task.getMappingsRelativeConfPath().set(".");
         task.doTask();
 
         try (val expectedJarFile = new JarFile(getDeobfuscatedJar());

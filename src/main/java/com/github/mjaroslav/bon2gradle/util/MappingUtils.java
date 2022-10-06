@@ -27,15 +27,15 @@ public class MappingUtils {
     @Nullable
     public MappingVersion getCurrentMapping(@NotNull Project project) {
         val config = project.getExtensions().getByType(Bon2GradleExtension.class);
-        if (config.isForceMapping()) {
+        if (config.getForceMapping().get()) {
             val forcedLocation = config.getForcedMappingLocations();
-            if (forcedLocation != null && forcedLocation.isDirectory())
-                return getMapping(forcedLocation, config.getForcedMappingRelativeConfPath());
+            if (forcedLocation.isPresent() && forcedLocation.get().getAsFile().isDirectory())
+                return getMapping(forcedLocation.get().getAsFile(), config.getForcedMappingRelativeConfPath().get());
             throw new IllegalStateException("Forced mapping not set!");
         }
         val provider = config.getMappingProviderObject();
         val cacheDir = getCacheDir(project);
-        if (provider != null && (!provider.isShouldCreateCacheDir() || cacheDir.mkdirs()))
+        if (provider != null && (cacheDir.isDirectory() || cacheDir.mkdirs()))
             return provider.getCurrentMappings(project, cacheDir);
         throw new IllegalStateException("No one mapping or provider not found or set!");
     }
