@@ -24,7 +24,6 @@ public class MappingUtils {
         return new File(project.getBuildDir(), "bon2Gradle/mappings/");
     }
 
-    @Nullable
     public MappingVersion getCurrentMapping(@NotNull Project project) {
         val config = project.getExtensions().getByType(Bon2GradleExtension.class);
         if (config.getForceMapping().get()) {

@@ -25,11 +25,9 @@ java {
 }
 
 sourceSets {
-    functionalTest {
-    }
+    sharedTest
+    functionalTest
 }
-
-configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
 
 tasks.register('functionalTest', Test) {
     group = 'verification'
@@ -49,7 +47,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-configure([tasks.compileJava, tasks.compileTestJava, tasks.compileFunctionalTestJava]) {
+configure([tasks.compileJava, tasks.compileTestJava, tasks.compileFunctionalTestJava, tasks.compileSharedTestJava]) {
     sourceCompatibility = 16 // for the IDE support
     options.release = 8
     javaCompiler = javaToolchains.compilerFor { languageVersion = JavaLanguageVersion.of(16) }
@@ -64,24 +62,31 @@ dependencies {
         changing = true
     }
     implementation "com.github.FIXxp:BON2:${project.bon2_version}:bin"
-    testImplementation("com.anatawa12.forge:ForgeGradle:${project.forgegradle_version}") {
+    sharedTestImplementation("com.anatawa12.forge:ForgeGradle:${project.forgegradle_version}") {
         changing = true
     }
-    testImplementation "org.junit.jupiter:junit-jupiter:${project.junit_version}"
+    sharedTestImplementation "org.junit.jupiter:junit-jupiter:${project.junit_version}"
 
     compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
-    testCompileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
-    functionalTestCompileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+    sharedTestCompileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
     compileOnly "org.projectlombok:lombok:${project.lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${project.lombok_version}"
-    testCompileOnly "org.projectlombok:lombok:${project.lombok_version}"
-    testAnnotationProcessor "org.projectlombok:lombok:${project.lombok_version}"
-    functionalTestCompileOnly "org.projectlombok:lombok:${project.lombok_version}"
-    functionalTestAnnotationProcessor "org.projectlombok:lombok:${project.lombok_version}"
+    sharedTestCompileOnly "org.projectlombok:lombok:${project.lombok_version}"
+    sharedTestAnnotationProcessor "org.projectlombok:lombok:${project.lombok_version}"
     annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${project.jabel_version}"
-    testAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${project.jabel_version}"
-    functionalTestAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${project.jabel_version}"
+    sharedTestAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${project.jabel_version}"
+    testImplementation sourceSets.sharedTest.output
+    functionalTestImplementation sourceSets.sharedTest.output
 }
+
+configurations.sharedTestImplementation.extendsFrom(configurations.implementation)
+// Adds all dependencies from sharedTest to test and functionalTest
+configurations.stream().filter(conf -> conf.name.startsWith('sharedTest')).forEach( {
+    if (!it.name.endsWith("ForTest")) {
+        configurations.getByName('functionalT' + it.name.substring(7)).extendsFrom(it)
+        configurations.getByName('t' + it.name.substring(7)).extendsFrom(it)
+    }
+})
 
 gradlePlugin {
     plugins {

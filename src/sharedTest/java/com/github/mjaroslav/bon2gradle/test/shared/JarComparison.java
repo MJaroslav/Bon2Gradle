@@ -1,4 +1,4 @@
-package com.github.mjaroslav.bon2gradle.util;
+package com.github.mjaroslav.bon2gradle.test.shared;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;

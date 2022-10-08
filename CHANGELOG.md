@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- You can wrap your dependency in `bon2.deobf` method for deobfuscate it.
 - Gradle extension with configuration.
   - Force mappings.
   - Mappings provider (if you use another MC dev plugin).
