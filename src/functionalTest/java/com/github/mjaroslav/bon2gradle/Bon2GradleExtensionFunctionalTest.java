@@ -25,9 +25,7 @@ class Bon2GradleExtensionFunctionalTest {
     }
 
     @Test
-    void test$canRunTask() throws IOException {
-        // TODO: FIX THIS ANOTHER RUN DEPENDENCY
-        GradleUtils.initBaseForgeGradle12Project(projectDir);
+    void test$deobf() throws IOException {
         val runner = GradleRunner.create();
         runner.withPluginClasspath();
         var script = IOUtils.readStringFromResources(PACKAGE + "Bon2GradleExtensionBuild.gradle");
@@ -37,6 +35,8 @@ class Bon2GradleExtensionFunctionalTest {
         runner.withArguments("dependencies", "--stacktrace");
         runner.withProjectDir(projectDir);
         val result = runner.build();
-        assertTrue(result.getOutput().contains("BUILD SUCCESS"));
+        assertTrue(result.getOutput().contains("BUILD SUCCESS"), "Run not successful");
+        assertTrue(result.getOutput().contains("curse.maven:hardcore-ender-expansion-228015:2316923"),
+            "Library not resolved");
     }
 }

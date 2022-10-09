@@ -22,5 +22,7 @@ public abstract class Bon2GradlePlugin implements Plugin<Project> {
         });
     }
 
-    private void setup() {}
+    private void setup() {
+        // NO-OP
+    }
 }

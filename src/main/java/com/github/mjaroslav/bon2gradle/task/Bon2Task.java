@@ -1,10 +1,10 @@
 package com.github.mjaroslav.bon2gradle.task;
 
+import com.github.mjaroslav.bon2gradle.util.BonHandlers;
 import com.github.mjaroslav.bon2gradle.util.MappingUtils;
 import com.github.parker8283.bon2.BON2Impl;
-import com.github.parker8283.bon2.cli.CLIErrorHandler;
-import com.github.parker8283.bon2.cli.CLIProgressListener;
 import com.github.parker8283.bon2.data.MappingVersion;
+import lombok.val;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
@@ -30,13 +30,16 @@ public abstract class Bon2Task extends DefaultTask {
 
     @TaskAction
     public void doTask() throws IOException {
-        BON2Impl.remap(getFrom().get().getAsFile(), getTo().get().getAsFile(), getMappingVersion(),
-            new CLIErrorHandler(), new CLIProgressListener());
+        val bonHandlers = new BonHandlers(getProject());
+        val parent = getTo().get().getAsFile().getParentFile();
+        if (parent.isDirectory() || parent.mkdirs())
+            BON2Impl.remap(getFrom().get().getAsFile(), getTo().get().getAsFile(), getMappingVersion(),
+                bonHandlers, bonHandlers);
     }
 
     @UnknownNullability
     @Internal
-    MappingVersion getMappingVersion() {
+    public MappingVersion getMappingVersion() {
         if (!getMapping().isPresent()) return MappingUtils.getCurrentMapping(getProject());
         else return MappingUtils.getMapping(getMapping().get().getAsFile(), getMappingsRelativeConfPath().get());
     }
