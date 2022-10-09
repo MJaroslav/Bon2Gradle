@@ -1,5 +1,3 @@
-package io.github.mjaroslav.bon2gradle
-
 buildscript {
     repositories {
         mavenCentral()

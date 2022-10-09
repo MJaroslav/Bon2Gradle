@@ -28,7 +28,7 @@ class Bon2GradleExtensionFunctionalTest {
     void test$deobf() throws IOException {
         val runner = GradleRunner.create();
         runner.withPluginClasspath();
-        var script = IOUtils.readStringFromResources(TestConstants.PACKAGE + "io.github.mjaroslav.bon2gradle.Bon2GradleExtensionBuild.gradle");
+        var script = IOUtils.readStringFromResources(TestConstants.PACKAGE + "Bon2GradleExtensionBuild.gradle");
         script = String.format(script, GradleUtils.getClasspathString(runner));
         IOUtils.writeString(getBuildFile().toPath(), script);
         runner.forwardOutput();

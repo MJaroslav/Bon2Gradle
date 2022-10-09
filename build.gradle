@@ -16,7 +16,7 @@ repositories {
     }
 }
 
-group = 'com.github.mjaroslav.bon2gradle'
+group = 'io.github.mjaroslav.bon2gradle'
 version = '0.1.0'
 archivesBaseName = "Bon2Gradle"
 
@@ -92,7 +92,7 @@ gradlePlugin {
     plugins {
         bon2gradle {
             id = 'bon2gradle'
-            implementationClass = 'com.github.mjaroslav.bon2gradle.Bon2GradlePlugin'
+            implementationClass = 'io.github.mjaroslav.bon2gradle.Bon2GradlePlugin'
         }
     }
 }

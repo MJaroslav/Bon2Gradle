@@ -20,7 +20,7 @@ public abstract class Bon2GradleExtension {
 
     public abstract Property<Boolean> getForceMapping();
 
-    public abstract RegularFileProperty getForcedMappingLocations();
+    public abstract RegularFileProperty getForcedMappingLocation();
 
     public abstract Property<String> getForcedMappingRelativeConfPath();
 

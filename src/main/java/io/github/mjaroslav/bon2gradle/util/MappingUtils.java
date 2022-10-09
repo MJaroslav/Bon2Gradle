@@ -27,7 +27,7 @@ public class MappingUtils {
     public MappingVersion getCurrentMapping(@NotNull Project project) {
         val config = project.getExtensions().getByType(Bon2GradleExtension.class);
         if (config.getForceMapping().get()) {
-            val forcedLocation = config.getForcedMappingLocations();
+            val forcedLocation = config.getForcedMappingLocation();
             if (forcedLocation.isPresent() && forcedLocation.get().getAsFile().isDirectory())
                 return getMapping(forcedLocation.get().getAsFile(), config.getForcedMappingRelativeConfPath().get());
             throw new IllegalStateException("Forced mapping not set!");
