@@ -1,0 +1,39 @@
+package io.github.mjaroslav.bon2gradle
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name 'forge'
+            url 'https://maven.minecraftforge.net/'
+        }
+    }
+    dependencies {
+        classpath('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
+            changing = true
+        }
+        classpath files(%s)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://cursemaven.com/"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'forge'
+apply plugin: 'bon2gradle'
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+}
+
+dependencies {
+    implementation bon2.deobf("curse.maven:hardcore-ender-expansion-228015:2316923")
+}
