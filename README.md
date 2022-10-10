@@ -32,8 +32,8 @@ buildscript {
             changing = true
         }
         
-        // Add this dependency, you can use "master-SNAPSHOT" as version for always using latest version
-        classpath 'com.github.mjaroslav.bon2gradle:Bon2Gradle:0.1.0'
+        // Add this dependency, you can use "master-SNAPSHOT" as version for using last commit
+        classpath 'com.github.MJaroslav:Bon2Gradle:0.2.0'
     }
 }
 ```
@@ -78,6 +78,9 @@ dependencies {
 
 ```
 
+**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both  
+together before isssue report (TODO: fix this).
+
 ## Supported Minecaft Dev Plugins
 
 - It's written and tested with ForgeGradle-1.2 fork by anatawa12.
@@ -86,7 +89,7 @@ dependencies {
 
 ## Building
 
-Just clone repository, checkout to this branch and run `./gradlew build`. If you get any MC source problem than run
+Just clone repository, checkout to this branch and run `./gradlew build`.
 
 ## Post Scriptum
 

@@ -2,8 +2,8 @@ package io.github.mjaroslav.bon2gradle.task;
 
 import io.github.mjaroslav.bon2gradle.util.BonHandlers;
 import io.github.mjaroslav.bon2gradle.util.MappingUtils;
-import com.github.parker8283.bon2.BON2Impl;
-import com.github.parker8283.bon2.data.MappingVersion;
+import io.github.mjaroslav.bon2.BON2Impl;
+import io.github.mjaroslav.bon2.data.MappingVersion;
 import lombok.val;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;

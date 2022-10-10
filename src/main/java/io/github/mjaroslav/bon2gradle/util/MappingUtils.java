@@ -1,7 +1,7 @@
 package io.github.mjaroslav.bon2gradle.util;
 
 import io.github.mjaroslav.bon2gradle.Bon2GradleExtension;
-import com.github.parker8283.bon2.data.MappingVersion;
+import io.github.mjaroslav.bon2.data.MappingVersion;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.gradle.api.Project;

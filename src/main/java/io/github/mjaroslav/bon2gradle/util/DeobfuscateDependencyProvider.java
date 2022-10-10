@@ -1,7 +1,7 @@
 package io.github.mjaroslav.bon2gradle.util;
 
 import io.github.mjaroslav.bon2gradle.Bon2GradleConstants;
-import com.github.parker8283.bon2.BON2Impl;
+import io.github.mjaroslav.bon2.BON2Impl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;

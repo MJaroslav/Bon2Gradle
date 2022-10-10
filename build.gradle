@@ -16,8 +16,8 @@ repositories {
     }
 }
 
-group = 'io.github.mjaroslav.bon2gradle'
-version = '0.1.0'
+group = 'io.github.mjaroslav'
+version = '0.2.0'
 archivesBaseName = "Bon2Gradle"
 
 java {
@@ -58,10 +58,7 @@ dependencies {
     compileOnly("com.anatawa12.forge:ForgeGradle:${project.forgegradle_version}") {
         changing = true
     }
-    runtimeOnly("com.anatawa12.forge:ForgeGradle:${project.forgegradle_version}") {
-        changing = true
-    }
-    implementation "com.github.FIXxp:BON2:${project.bon2_version}:bin"
+    api "com.github.MJaroslav:BON2:${project.bon2_version}"
     sharedTestImplementation("com.anatawa12.forge:ForgeGradle:${project.forgegradle_version}") {
         changing = true
     }

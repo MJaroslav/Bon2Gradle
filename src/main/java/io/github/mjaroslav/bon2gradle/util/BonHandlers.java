@@ -1,7 +1,7 @@
 package io.github.mjaroslav.bon2gradle.util;
 
-import com.github.parker8283.bon2.data.IErrorHandler;
-import com.github.parker8283.bon2.data.IProgressListener;
+import io.github.mjaroslav.bon2.data.IErrorHandler;
+import io.github.mjaroslav.bon2.data.IProgressListener;
 import lombok.RequiredArgsConstructor;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;

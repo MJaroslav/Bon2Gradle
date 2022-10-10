@@ -1,7 +1,7 @@
 package io.github.mjaroslav.bon2gradle.api.impl;
 
 import io.github.mjaroslav.bon2gradle.api.MappingProvider;
-import com.github.parker8283.bon2.data.MappingVersion;
+import io.github.mjaroslav.bon2.data.MappingVersion;
 import lombok.SneakyThrows;
 import lombok.val;
 import net.minecraftforge.gradle.delayed.DelayedFile;
