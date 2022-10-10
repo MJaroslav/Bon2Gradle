@@ -78,7 +78,7 @@ dependencies {
 
 ```
 
-**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both  
+**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both
 together before isssue report (TODO: fix this).
 
 ## Supported Minecaft Dev Plugins
