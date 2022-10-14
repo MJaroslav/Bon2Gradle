@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -23,11 +24,15 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class JarComparison {
-    public void compareJarClassMembers(File expected, File actual) throws IOException {
-        try (JarFile expectedJarFile = new JarFile(expected);
-             JarFile actualJarFile = new JarFile(actual)) {
+    public void compareJarClassMembers(@NotNull File expected, @NotNull File actual) throws IOException {
+        try (val expectedJarFile = new JarFile(expected);
+             val actualJarFile = new JarFile(actual)) {
             compareJarClassMembers(expectedJarFile, actualJarFile);
         }
+    }
+
+    public void compareJarClassMembers(@NotNull Path expected, @NotNull Path actual) throws IOException {
+        compareJarClassMembers(expected.toFile(), actual.toFile());
     }
 
     public void compareJarClassMembers(@NotNull JarFile expected, @NotNull JarFile actual) throws IOException {

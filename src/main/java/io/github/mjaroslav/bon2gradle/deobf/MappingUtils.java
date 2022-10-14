@@ -1,9 +1,10 @@
-package io.github.mjaroslav.bon2gradle.util;
+package io.github.mjaroslav.bon2gradle.deobf;
 
-import io.github.mjaroslav.bon2gradle.Bon2GradleExtension;
 import io.github.mjaroslav.bon2.data.MappingVersion;
+import io.github.mjaroslav.bon2gradle.Bon2GradleExtension;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +31,12 @@ public class MappingUtils {
             val forcedLocation = config.getForcedMappingLocation();
             if (forcedLocation.isPresent() && forcedLocation.get().getAsFile().isDirectory())
                 return getMapping(forcedLocation.get().getAsFile(), config.getForcedMappingRelativeConfPath().get());
-            throw new IllegalStateException("Forced mapping not set!");
+            throw new GradleException("Forced mapping not set!");
         }
         val provider = config.getMappingProviderObject();
         val cacheDir = getCacheDir(project);
         if (provider != null && (cacheDir.isDirectory() || cacheDir.mkdirs()))
             return provider.getCurrentMappings(project, cacheDir);
-        throw new IllegalStateException("No one mapping or provider not found or set!");
+        throw new GradleException("Forced mapping or provider not set!");
     }
 }

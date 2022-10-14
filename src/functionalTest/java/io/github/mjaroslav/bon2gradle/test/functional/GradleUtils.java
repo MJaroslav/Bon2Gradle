@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class GradleUtils {
-    public String getClasspathString(@NotNull GradleRunner runner) {
+    public @NotNull String getClasspathString(@NotNull GradleRunner runner) {
         return runner.getPluginClasspath().stream().map(file -> "'" + file.getAbsolutePath() + "'")
             .collect(Collectors.joining(","));
     }

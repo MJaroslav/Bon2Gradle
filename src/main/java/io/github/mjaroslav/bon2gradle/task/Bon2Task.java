@@ -1,7 +1,7 @@
 package io.github.mjaroslav.bon2gradle.task;
 
-import io.github.mjaroslav.bon2gradle.util.BonHandlers;
-import io.github.mjaroslav.bon2gradle.util.MappingUtils;
+import io.github.mjaroslav.bon2gradle.deobf.Bon2ProgressListenerErrorHandler;
+import io.github.mjaroslav.bon2gradle.deobf.MappingUtils;
 import io.github.mjaroslav.bon2.BON2Impl;
 import io.github.mjaroslav.bon2.data.MappingVersion;
 import lombok.val;
@@ -30,7 +30,7 @@ public abstract class Bon2Task extends DefaultTask {
 
     @TaskAction
     public void doTask() throws IOException {
-        val bonHandlers = new BonHandlers(getProject());
+        val bonHandlers = new Bon2ProgressListenerErrorHandler(getProject());
         val parent = getTo().get().getAsFile().getParentFile();
         if (parent.isDirectory() || parent.mkdirs())
             BON2Impl.remap(getFrom().get().getAsFile(), getTo().get().getAsFile(), getMappingVersion(),

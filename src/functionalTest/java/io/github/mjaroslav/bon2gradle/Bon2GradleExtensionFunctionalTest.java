@@ -8,20 +8,26 @@ import io.github.mjaroslav.bon2gradle.test.shared.IOUtils;
 import io.github.mjaroslav.bon2gradle.test.shared.TestConstants;
 import lombok.val;
 import org.gradle.testkit.runner.GradleRunner;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Bon2GradleExtensionFunctionalTest {
     @TempDir
-    File projectDir;
+    static File projectDirFile;
 
-    private File getBuildFile() {
-        return new File(projectDir, "build.gradle");
+    static Path projectDir, buildScript;
+
+    @BeforeAll
+    static void beforeAll() {
+        projectDir = projectDirFile.toPath();
+        buildScript = projectDir.resolve("build.gradle");
     }
 
     @Test
@@ -30,10 +36,10 @@ class Bon2GradleExtensionFunctionalTest {
         runner.withPluginClasspath();
         var script = IOUtils.readStringFromResources(TestConstants.PACKAGE + "Bon2GradleExtensionBuild.gradle");
         script = String.format(script, GradleUtils.getClasspathString(runner));
-        IOUtils.writeString(getBuildFile().toPath(), script);
+        IOUtils.writeString(buildScript, script);
         runner.forwardOutput();
         runner.withArguments("dependencies", "--stacktrace");
-        runner.withProjectDir(projectDir);
+        runner.withProjectDir(projectDirFile);
         val result = runner.build();
         assertTrue(result.getOutput().contains("BUILD SUCCESS"), "Run not successful");
         assertTrue(result.getOutput().contains("curse.maven:hardcore-ender-expansion-228015:2316923"),

@@ -1,4 +1,4 @@
-package io.github.mjaroslav.bon2gradle.util;
+package io.github.mjaroslav.bon2gradle.artifacts.dependencies;
 
 import org.gradle.api.artifacts.ExternalModuleDependency;
 import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency;
@@ -8,18 +8,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public class DeobfuscateDependency extends DefaultSelfResolvingDependency {
-    @NotNull
-    private final ExternalModuleDependency pure;
+public class DeobfuscatedDependency extends DefaultSelfResolvingDependency {
+    private final @NotNull ExternalModuleDependency pure;
 
-    public DeobfuscateDependency(@NotNull FileCollectionInternal source, @NotNull ExternalModuleDependency pure) {
+    public DeobfuscatedDependency(@NotNull FileCollectionInternal source, @NotNull ExternalModuleDependency pure) {
         super(source);
         this.pure = pure;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return pure.getName();
     }
 
@@ -33,11 +31,9 @@ public class DeobfuscateDependency extends DefaultSelfResolvingDependency {
         return pure.getGroup();
     }
 
-    @NotNull
     @Override
-    public TaskDependency getBuildDependencies() {
-        // Это говно ебаное не работает нихуя сука, че бы блять и как бы я
-        // нахуй сюда и в целом не писал блять
+    public @NotNull TaskDependency getBuildDependencies() {
+        // This shit don't work, I can't understand why
         return dependencies -> Collections.emptySet();
     }
 }

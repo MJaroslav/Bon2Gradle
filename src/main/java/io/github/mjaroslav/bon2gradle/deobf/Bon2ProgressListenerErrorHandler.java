@@ -1,4 +1,4 @@
-package io.github.mjaroslav.bon2gradle.util;
+package io.github.mjaroslav.bon2gradle.deobf;
 
 import io.github.mjaroslav.bon2.data.IErrorHandler;
 import io.github.mjaroslav.bon2.data.IProgressListener;
@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;
 
+// TODO: Make logs in BON2 fork more informative
 @RequiredArgsConstructor
-public class BonHandlers implements IProgressListener, IErrorHandler {
-    @NotNull
-    private final Project project;
+public class Bon2ProgressListenerErrorHandler implements IProgressListener, IErrorHandler {
+    private final @NotNull Project project;
 
     @Override
     public void start(int max, String label) {
