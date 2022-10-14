@@ -37,8 +37,8 @@ class Bon2TaskTest {
             .build();
         val task = project.getTasks().create("deobf", Bon2Task.class);
 
-        IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskObfuscated.jar", deobfuscatedJar);
-        IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskDeobfuscated.jar", deobfuscatedActualJar);
+        IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskObfuscated.jar", obfuscatedJar);
+        IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskDeobfuscated.jar", deobfuscatedJar);
         IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskMethods.csv", methodsCsv);
         IOUtils.copyFromResources(PACKAGE + "task/Bon2TaskFields.csv", fieldsScv);
 
