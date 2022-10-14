@@ -2,13 +2,15 @@ package io.github.mjaroslav.bon2gradle.provider;
 
 import io.github.mjaroslav.bon2.BON2Impl;
 import io.github.mjaroslav.bon2gradle.Bon2GradleConstants;
-import io.github.mjaroslav.bon2gradle.deobf.Bon2ProgressListenerErrorHandler;
+import io.github.mjaroslav.bon2gradle.Bon2GradleExtension;
 import io.github.mjaroslav.bon2gradle.artifacts.dependencies.DeobfuscatedDependency;
+import io.github.mjaroslav.bon2gradle.deobf.Bon2ProgressListenerErrorHandler;
 import io.github.mjaroslav.bon2gradle.deobf.MappingUtils;
 import io.github.mjaroslav.bon2gradle.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.gradle.api.GradleException;
 import org.gradle.api.IllegalDependencyNotation;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ExternalModuleDependency;
@@ -20,8 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,9 +39,24 @@ public class DeobfuscatedDependencyProvider extends AbstractMinimalProvider<Deob
 
     private @NotNull Set<File> resolveDirty() {
         if (resolved == null) {
-            val resolvedPure = resolvePure(identifier);
-            val deobfuscated = new File[resolvedPure.size()];
-            resolved = resolvePure(identifier).stream().map(this::deobfFile).collect(Collectors.toSet());
+            if (project.getExtensions().getByType(Bon2GradleExtension.class).getUseParallelDeobfuscation().get()) {
+                val resolvedPure = resolvePure(identifier).toArray(new File[0]);
+                val deobfuscated = new File[resolvedPure.length];
+                val es = Executors.newCachedThreadPool();
+                for (var i = 0; i < resolvedPure.length; i++) {
+                    val I = i;
+                    es.execute(() -> deobfuscated[I] = deobfFile(resolvedPure[I]));
+                }
+                es.shutdown();
+                try {
+                    boolean finished = es.awaitTermination(1, TimeUnit.MINUTES);
+                    if (!finished) throw new GradleException("Deobfuscation timeout of " + identifier);
+                    resolved = Arrays.stream(deobfuscated).collect(Collectors.toSet());
+                } catch (InterruptedException e) {
+                    throw new ArtifactResolveException("Can't deobfuscate artifacts from " + identifier, e);
+                }
+            } else
+                resolved = resolvePure(identifier).stream().map(this::deobfFile).collect(Collectors.toSet());
         }
         return resolved;
     }
