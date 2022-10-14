@@ -1,6 +1,7 @@
 package io.github.mjaroslav.bon2gradle.provider;
 
 import io.github.mjaroslav.bon2.BON2Impl;
+import io.github.mjaroslav.bon2.data.MappingVersion;
 import io.github.mjaroslav.bon2gradle.Bon2GradleConstants;
 import io.github.mjaroslav.bon2gradle.Bon2GradleExtension;
 import io.github.mjaroslav.bon2gradle.artifacts.dependencies.DeobfuscatedDependency;
@@ -18,6 +19,7 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.internal.file.FileCollectionInternal;
 import org.gradle.api.internal.provider.AbstractMinimalProvider;
 import org.gradle.internal.resolve.ArtifactResolveException;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,14 +83,23 @@ public class DeobfuscatedDependencyProvider extends AbstractMinimalProvider<Deob
             "but your: " + identifier);
     }
 
+    @Contract("_ -> new")
+    private @NotNull File getCachesDir(@NotNull MappingVersion mapping) {
+        var cachesDir = project.getGradle().getGradleUserHomeDir().getAbsolutePath().replace('\\', '/') + "/caches";
+        cachesDir = cachesDir + String.format(Bon2GradleConstants.DIR_DEOBF, mapping.getVersion());
+        return new File(cachesDir);
+    }
+
     @SneakyThrows
     private @NotNull File deobfFile(@NotNull File inFile) {
-        val parent = new File(project.getBuildDir(), Bon2GradleConstants.DIR_DEOBF);
+        val mapping = MappingUtils.getCurrentMapping(project);
+        val parent = getCachesDir(mapping);
+        // TODO: May be make it with group paths?
         val outFile = new File(parent, inFile.getName());
         if ((parent.isDirectory() || parent.mkdirs()) &&
             (!outFile.isFile() || project.getGradle().getStartParameter().isRefreshDependencies())) {
             val bonHandlers = new Bon2ProgressListenerErrorHandler(project);
-            BON2Impl.remap(inFile, outFile, MappingUtils.getCurrentMapping(project),
+            BON2Impl.remap(inFile, outFile, mapping,
                 bonHandlers, bonHandlers);
         }
         return outFile;
