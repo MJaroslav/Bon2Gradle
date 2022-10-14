@@ -44,6 +44,8 @@ buildscript {
 // Extension for BON2 configuring
 // option = defaultValue // Description
 bon2 {
+    useParallelDeobfuscation = false // If dependency contains more than one file,
+    // then they will deobfuscated paralelly
     forceMapping = false // Use only next mapping for all dependencies
     forcedMappingLocation = null // Directory with methods.csv and fields.csv files
     forcedMappingRelativeConfPath = null // Additional relative path from uppder parameter file.
@@ -78,8 +80,8 @@ dependencies {
 
 ```
 
-**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both
-together before isssue report (TODO: fix this).
+~~**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both
+together before isssue report (TODO: fix this).~~
 
 ## Supported Minecaft Dev Plugins
 
