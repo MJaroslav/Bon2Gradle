@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import static io.github.mjaroslav.bon2gradle.Bon2GradleConstants.EXTENSION_NAME;
 
 @Getter
-public abstract class Bon2GradlePlugin implements Plugin<Project> {
+public class Bon2GradlePlugin implements Plugin<Project> {
     @Getter
     private static Logger logger;
 
@@ -20,6 +20,6 @@ public abstract class Bon2GradlePlugin implements Plugin<Project> {
     public void apply(@NotNull Project project) {
         this.project = project;
         logger = project.getLogger();
-        extension = project.getExtensions().create(EXTENSION_NAME, Bon2GradleExtension.class);
+        extension = project.getExtensions().create(EXTENSION_NAME, Bon2GradleExtension.class, project);
     }
 }

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2022-10-16
+
+### Fixed
+
+- Project configuration error with "Plugin class is abstract" error on some versions of Gradle.
+
 ## [0.3.0] - 2022-10-14
 
 ### Fixed
@@ -15,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Parallel dependency deobfuscation.
-    - With toggle option in `bon2` extension.
+  - With toggle option in `bon2` extension.
 
 ### Edited
 
@@ -34,11 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - You can wrap your dependency in `bon2.deobf` method for deobfuscate it.
 - Gradle extension with configuration.
-    - Force mappings.
-    - Mappings provider (if you use another MC dev plugin).
+  - Force mappings.
+  - Mappings provider (if you use another MC dev plugin).
 - Bon2Task for use BON2 in Gradle.
 
-[unreleased]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.3.1...HEAD
+
+[0.3.1]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.3.0...v0.3.1
 
 [0.3.0]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.2.0...v0.3.0
 

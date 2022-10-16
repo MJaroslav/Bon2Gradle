@@ -12,6 +12,11 @@ Plugin for Minecraft Dev projects that allows use BON2 as analog of `fg.reobf` f
 
 ## Usage
 
+### Dependencies
+
+- Gradle 6.8+ (Provider as dependency notation).
+- Java 8+ (lambdas and streams).
+
 ### Adding plugin to build script
 
 ```groovy
@@ -33,9 +38,11 @@ buildscript {
         }
         
         // Add this dependency, you can use "master-SNAPSHOT" as version for using last commit
-        classpath 'com.github.MJaroslav:Bon2Gradle:0.2.0'
+        classpath 'com.github.MJaroslav:Bon2Gradle:0.3.1'
     }
 }
+
+apply plugin: 'bon2gradle' // Applying plugin
 ```
 
 ### Plugin configuring
@@ -80,10 +87,7 @@ dependencies {
 
 ```
 
-~~**Note:** if dependencies don't deobfuscated, try `--refresh-dependencies`, `--rerun-tasks` or both
-together before isssue report (TODO: fix this).~~
-
-## Supported Minecaft Dev Plugins
+## Supported Minecraft Dev Plugins
 
 - It's written and tested with ForgeGradle-1.2 fork by anatawa12.
 - In theory, if I don't use any code of FG outside from their MappingProvider then
@@ -91,7 +95,11 @@ together before isssue report (TODO: fix this).~~
 
 ## Building
 
-Just clone repository, checkout to this branch and run `./gradlew build`.
+Just clone repository, checkout to this branch and run `./gradlew build`. It will build project with unit tests, if you
+want to run functional tests to, run it with `CI=true` environment variable.
+
+Minimal required JDK version is `8`. You can see some syntax sugar from the newest versions, it possible by Jabel
+plugin.
 
 ## Post Scriptum
 

@@ -8,6 +8,7 @@ import io.github.mjaroslav.bon2gradle.test.shared.IOUtils;
 import io.github.mjaroslav.bon2gradle.test.shared.TestConstants;
 import lombok.val;
 import org.gradle.testkit.runner.GradleRunner;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -31,13 +32,23 @@ class Bon2GradleExtensionFunctionalTest {
     }
 
     @Test
-    void test$deobf() throws IOException {
+    void test$deobf_7_5_1() throws IOException {
+        deobf("7.5.1"); // Current version
+    }
+
+    @Test
+    void test$deobf_6_8() throws IOException {
+        deobf("6.8"); // Minimal version
+    }
+
+    private void deobf(@NotNull String version) throws IOException {
         val runner = GradleRunner.create();
         runner.withPluginClasspath();
         var script = IOUtils.readStringFromResources(TestConstants.PACKAGE + "Bon2GradleExtensionBuild.gradle");
         script = String.format(script, GradleUtils.getClasspathString(runner));
         IOUtils.writeString(buildScript, script);
         runner.forwardOutput();
+        runner.withGradleVersion(version);
         runner.withArguments("dependencies", "--stacktrace");
         runner.withProjectDir(projectDirFile);
         val result = runner.build();
