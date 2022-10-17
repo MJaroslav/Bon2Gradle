@@ -38,7 +38,7 @@ buildscript {
         }
         
         // Add this dependency, you can use "master-SNAPSHOT" as version for using last commit
-        classpath 'com.github.MJaroslav:Bon2Gradle:0.3.1'
+        classpath 'com.github.MJaroslav:Bon2Gradle:0.4.0'
     }
 }
 
