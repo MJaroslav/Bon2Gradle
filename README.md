@@ -1,6 +1,6 @@
 # Bon2Gradle
 
-Plugin for Minecraft Dev projects that allows use BON2 as analog of `fg.reobf` from ForgeGradle.
+Plugin for Minecraft Dev projects that allows use BON2 as analog of `fg.deobf` from ForgeGradle.
 
 [![GitHub issues](https://img.shields.io/github/issues/MJaroslav/Bon2Gradle)](https://github.com/MJaroslav/Bon2Gradle/issues "GitHub issues")
 [![GitHub forks](https://img.shields.io/github/forks/MJaroslav/Bon2Gradle)](https://github.com/MJaroslav/Bon2Gradle/network "GitHub forks")

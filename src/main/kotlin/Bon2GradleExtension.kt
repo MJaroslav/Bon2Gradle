@@ -6,10 +6,9 @@ import org.gradle.api.GradleScriptException
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.jetbrains.annotations.NotNull
 import javax.inject.Inject
 
-abstract class Bon2GradleExtension @Inject constructor(@NotNull private val project: Project) {
+abstract class Bon2GradleExtension @Inject constructor(private val project: Project) {
     val forceMapping: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
     val forcedMappingLocation: RegularFileProperty = project.objects.fileProperty()
     val forcedMappingRelativeConfPath: Property<String> = project.objects.property(String::class.java).convention("")
@@ -29,7 +28,6 @@ abstract class Bon2GradleExtension @Inject constructor(@NotNull private val proj
         result
     }
 
-    fun deobf(@NotNull identifier: Any): DeobfuscatedDependencyProvider {
-        return DeobfuscatedDependencyProvider(project, identifier)
-    }
+    fun deobf(identifier: Any): DeobfuscatedDependencyProvider =
+        DeobfuscatedDependencyProvider(project, identifier)
 }
