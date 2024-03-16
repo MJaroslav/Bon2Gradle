@@ -1,49 +1,73 @@
-package io.github.mjaroslav.bon2gradle.task
+package io.github.mjaroslav.bon2gradle.tasks
 
+import io.github.mjaroslav.bon2gradle.Bon2GradlePlugin
+import io.github.mjaroslav.bon2gradle.test.shared.IOUtils
+import io.github.mjaroslav.bon2gradle.test.shared.JarComparison
 import io.github.mjaroslav.bon2gradle.test.shared.PACKAGE
-import io.github.mjaroslav.bon2gradle.test.shared.compareJarClassMembers
-import io.github.mjaroslav.bon2gradle.test.shared.copyFromResources
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
+import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class Bon2TaskTest {
-    lateinit var projectDir: Path
-    lateinit var deobfuscatedJar: Path
-    lateinit var deobfuscatedActualJar: Path
-    lateinit var obfuscatedJar: Path
-    lateinit var fieldsScv: Path
-    lateinit var methodsCsv: Path
+    private lateinit var projectDir: File
+    private lateinit var producedJar: File
+    private lateinit var deobfuscatedJar: File
+    private lateinit var obfuscatedJar: File
+    private lateinit var fieldsCsv: File
+    private lateinit var methodsCsv: File
 
     @BeforeAll
-    fun beforeAll(@TempDir projectDir: Path) {
+    fun beforeAll(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        deobfuscatedJar = projectDir.resolve("Deobfuscated.jar")
-        deobfuscatedActualJar = projectDir.resolve("DeobfuscatedActual.jar")
-        obfuscatedJar = projectDir.resolve("Obfuscated.jar")
+        producedJar = projectDir.resolve("produced.jar")
+        deobfuscatedJar = projectDir.resolve("deobfuscated.jar")
+        obfuscatedJar = projectDir.resolve("obfuscated.jar")
         methodsCsv = projectDir.resolve("methods.csv")
-        fieldsScv = projectDir.resolve("fields.csv")
+        fieldsCsv = projectDir.resolve("fields.csv")
+        IOUtils.copyFromResources("${PACKAGE}tasks/obfuscated.jar", obfuscatedJar)
+        IOUtils.copyFromResources("${PACKAGE}tasks/deobfuscated.jar", deobfuscatedJar)
+        IOUtils.copyFromResources("${PACKAGE}tasks/methods.csv", methodsCsv)
+        IOUtils.copyFromResources("${PACKAGE}tasks/fields.csv", fieldsCsv)
+    }
+
+    @BeforeEach
+    fun beforeEach() {
+        producedJar.delete()
     }
 
     @Test
-    fun `test$deobf`() {
+    fun bon2task() {
         val project = ProjectBuilder.builder()
-            .withProjectDir(projectDir.toFile())
+            .withProjectDir(projectDir)
             .build()
-        val task = project.tasks.create("deobf", Bon2Task::class.java)
-        copyFromResources("${PACKAGE}task/Bon2TaskObfuscated.jar", obfuscatedJar)
-        copyFromResources("${PACKAGE}task/Bon2TaskDeobfuscated.jar", deobfuscatedJar)
-        copyFromResources("${PACKAGE}task/Bon2TaskMethods.csv", methodsCsv)
-        copyFromResources("${PACKAGE}task/Bon2TaskFields.csv", fieldsScv)
-        task.from.set(obfuscatedJar.toFile())
-        task.to.set(deobfuscatedActualJar.toFile())
-        task.mapping.set(projectDir.toFile())
-        task.mappingRelativeConfPath.set(".")
+        project.plugins.apply(Bon2GradlePlugin::class.java)
+        val task = project.tasks.create("deobfuscate", Bon2Task::class.java)
+        task.pureFile.set(obfuscatedJar)
+        task.deobfFile.set(producedJar)
+        task.csv.add(project.layout.projectDirectory.file(methodsCsv.name))
+        task.csv.add(project.layout.projectDirectory.file(fieldsCsv.name))
         task.doTask()
-        compareJarClassMembers(deobfuscatedJar, deobfuscatedActualJar)
+        JarComparison.compareJarClassMembers(producedJar, deobfuscatedJar)
+    }
+
+    @Test
+    fun bon2taskReversed() {
+        val project = ProjectBuilder.builder()
+            .withProjectDir(projectDir)
+            .build()
+        project.plugins.apply(Bon2GradlePlugin::class.java)
+        val task = project.tasks.create("obfuscate", Bon2Task::class.java)
+        task.pureFile.set(deobfuscatedJar)
+        task.deobfFile.set(producedJar)
+        task.csv.add(project.layout.projectDirectory.file(methodsCsv.name))
+        task.csv.add(project.layout.projectDirectory.file(fieldsCsv.name))
+        task.reverse.set(true)
+        task.doTask()
+        JarComparison.compareJarClassMembers(producedJar, obfuscatedJar)
     }
 }

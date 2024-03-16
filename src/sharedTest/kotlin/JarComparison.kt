@@ -15,47 +15,59 @@ import java.nio.file.Path
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-fun compareJarClassMembers(expected: File, actual: File) =
-    JarFile(expected).use { expectedJarFile ->
-        JarFile(actual).use { actualJarFile ->
-            compareJarClassMembers(
-                expectedJarFile,
-                actualJarFile
-            )
+class JarComparison {
+    companion object {
+        @JvmStatic
+        fun compareJarClassMembers(expected: File, actual: File) =
+            JarFile(expected).use { expectedJarFile ->
+                JarFile(actual).use { actualJarFile ->
+                    compareJarClassMembers(
+                        expectedJarFile,
+                        actualJarFile
+                    )
+                }
+            }
+
+        @JvmStatic
+        fun compareJarClassMembers(expected: Path, actual: Path) =
+            compareJarClassMembers(expected.toFile(), actual.toFile())
+
+        @JvmStatic
+        fun compareJarClassMembers(expected: JarFile, actual: JarFile) {
+            var visitedAnyClasses = false
+            expected.stream().filter { it.name.endsWith(".class") }.forEach {
+                visitedAnyClasses = true
+                val expectedNode = readClassNodeFromJarEntryInJarFile(expected, it)
+
+                Assertions.assertNotNull(expectedNode, "Should load expected node")
+                val changedNode = readClassNodeFromJarEntryInJarFile(actual, actual.getJarEntry(it.name))
+                Assertions.assertNotNull(changedNode, "Should load changed node")
+
+                val expectedFieldsNames = expectedNode!!.fields.map { field -> key(field) }.toSet()
+                val changedFieldsNames = changedNode!!.fields.map { field -> key(field) }.toSet()
+                Assertions.assertTrue(expectedFieldsNames == changedFieldsNames, "Fields names not equals")
+
+                val expectedMethodsNames = expectedNode.methods.map { method -> key(method) }.toSet()
+                val changedMethodsNames = changedNode.methods.map { method -> key(method) }.toSet()
+                Assertions.assertTrue(expectedMethodsNames == changedMethodsNames, "Methods names not equals")
+            }
+            Assertions.assertTrue(visitedAnyClasses, "Should visit classes in expected jar $expected")
         }
+
+        @JvmStatic
+        private fun key(node: MethodNode): String = node.name + ':' + node.desc
+
+        @JvmStatic
+        private fun key(node: FieldNode): String = node.name + ':' + node.desc
+
+        @JvmStatic
+        private fun readClassNodeFromJarEntryInJarFile(jarFile: JarFile, jarEntry: JarEntry?): ClassNode? =
+            if (jarEntry == null) null else jarFile.getInputStream(jarEntry).use {
+                val node = ClassNode()
+                val classReader = ClassReader(it)
+                classReader.accept(node, 0)
+                return node
+            }
+
     }
-
-fun compareJarClassMembers(expected: Path, actual: Path) = compareJarClassMembers(expected.toFile(), actual.toFile())
-
-fun compareJarClassMembers(expected: JarFile, actual: JarFile) {
-    var visitedAnyClasses = false
-    expected.stream().filter { it.name.endsWith(".class") }.forEach {
-        visitedAnyClasses = true
-        val expectedNode = readClassNodeFromJarEntryInJarFile(expected, it)
-
-        Assertions.assertNotNull(expectedNode, "Should load expected node")
-        val changedNode = readClassNodeFromJarEntryInJarFile(actual, actual.getJarEntry(it.name))
-        Assertions.assertNotNull(changedNode, "Should load changed node")
-
-        val expectedFieldsNames = expectedNode!!.fields.map { field -> key(field) }.toSet()
-        val changedFieldsNames = changedNode!!.fields.map { field -> key(field) }.toSet()
-        Assertions.assertTrue(expectedFieldsNames == changedFieldsNames, "Fields names not equals")
-
-        val expectedMethodsNames = expectedNode.methods.map { method -> key(method) }.toSet()
-        val changedMethodsNames = changedNode.methods.map { method -> key(method) }.toSet()
-        Assertions.assertTrue(expectedMethodsNames == changedMethodsNames, "Methods names not equals")
-    }
-    Assertions.assertTrue(visitedAnyClasses, "Should visit classes in expected jar $expected")
 }
-
-private fun key(node: MethodNode): String = node.name + ':' + node.desc
-
-private fun key(node: FieldNode): String = node.name + ':' + node.desc
-
-private fun readClassNodeFromJarEntryInJarFile(jarFile: JarFile, jarEntry: JarEntry?): ClassNode? =
-    if (jarEntry == null) null else jarFile.getInputStream(jarEntry).use {
-        val node = ClassNode()
-        val classReader = ClassReader(it)
-        classReader.accept(node, 0)
-        return node
-    }
