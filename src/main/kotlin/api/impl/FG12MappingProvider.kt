@@ -27,7 +27,7 @@ class FG12MappingProvider : MappingProvider {
         val location =
             DelayedFile(project, "{MCP_DATA_DIR}", project.plugins.getPlugin(ForgeUserPlugin::class.java)).call()
         if (!location.isDirectory) {
-            val task = project.tasks.getByName("extractMcpData") as ExtractConfigTask
+            val task = project.tasks.getByName("genSrgs") as ExtractConfigTask
             try {
                 task.doTask()
             } catch (e: IOException) {
