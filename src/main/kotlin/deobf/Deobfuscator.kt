@@ -62,13 +62,16 @@ class Deobfuscator(
         loadMappings(mappings, "fields.csv", handlers) + loadMappings(mappings, "methods.csv", handlers)
 
     private fun loadMappings(zip: File, entry: String, handlers: Bon2Handlers): Map<String, String> {
-        val lines = String(IOUtils.getZipData(zip, entry), StandardCharsets.UTF_8).lines()
-        handlers.start(lines.size - 1, "Reading in mappings: $entry")
+        val lines =
+            String(IOUtils.getZipData(zip, entry), StandardCharsets.UTF_8).lines().drop(1).filter { it.isNotBlank() }
+        handlers.start(lines.size - 1, "Loading mappings from CSV file $entry in zip $zip")
         val result = mutableMapOf<String, String>()
-        for (x in 1..lines.size) {
-            val values = lines[x].split(",")
-            result[values[0]] = values[1]
-            handlers.setProgress(x)
+        var split: List<String>
+        for ((index, line) in lines.withIndex()) {
+            handlers.setProgress(index)
+            split = line.split(",")
+            if (split.size > 1) result[split[0]] = split[1]
+            else handlers.handleError("Found bad line in $entry of $zip: $line", true)
         }
         return result
     }

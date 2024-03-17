@@ -46,12 +46,12 @@ class Bon2GradleExtensionFunctionalTest {
         IOUtils.writeString(buildScript, script)
         runner.forwardOutput()
         runner.withGradleVersion(version)
-        runner.withArguments("dependencies", "--stacktrace", "--refresh-dependencies")
+        runner.withArguments("dependencies", "--stacktrace", "--refresh-dependencies", "--info")
         runner.withProjectDir(projectDir)
         val result = runner.build()
         Assertions.assertTrue(result.output.contains("BUILD SUCCESS"), "Run not successful")
         Assertions.assertTrue(
-            result.output.contains("curse.maven:hardcore-ender-expansion-228015:2316923_deobfuscated_with_DIRTY"),
+            result.output.contains("curse.maven:hardcore-ender-expansion-228015:2316923_deobfuscated_with_stable_12"),
             "Library not resolved"
         )
     }

@@ -4,6 +4,7 @@ import io.github.mjaroslav.bon2gradle.Bon2GradleExtension
 import io.github.mjaroslav.bon2gradle.data.Bon2Handlers
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.Task
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -15,20 +16,30 @@ interface MappingProvider {
         @JvmStatic
         fun loadCSV(file: File, handlers: Bon2Handlers): Map<String, String> {
             try {
-                val lines = file.readLines(StandardCharsets.UTF_8).drop(1)
+                val lines = file.readLines(StandardCharsets.UTF_8).drop(1).filter { it.isNotBlank() }
                 handlers.start(lines.size - 1, "Loading mappings from CSV file $file")
-                val result = HashMap<String, String>()
+                val result = mutableMapOf<String, String>()
                 var split: List<String>
                 for ((index, line) in lines.withIndex()) {
                     handlers.setProgress(index)
                     split = line.split(",")
-                    result[split[0]] = split[1]
+                    if (split.size > 1) result[split[0]] = split[1]
+                    else handlers.handleError("Found bad line in $file: $line", true)
                 }
                 return result
             } catch (e: Throwable) {
                 handlers.handleError("Error while loading CSV file $file", false)
                 throw GradleException("Error while creating mappings", e)
             }
+        }
+
+        /**
+         * Manually execute task with dependencies. Can be helpful for [getMappings].
+         */
+        @JvmStatic
+        fun executeTask(task: Task) {
+            task.taskDependencies.getDependencies(task).forEach { executeTask(it) }
+            task.actions.forEach { it.execute(task) }
         }
     }
 

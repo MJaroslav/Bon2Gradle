@@ -3,7 +3,6 @@ package io.github.mjaroslav.bon2gradle.api.impl
 import io.github.mjaroslav.bon2gradle.api.MappingProvider
 import io.github.mjaroslav.bon2gradle.data.Bon2Handlers
 import net.minecraftforge.gradle.delayed.DelayedFile
-import net.minecraftforge.gradle.tasks.GenSrgTask
 import net.minecraftforge.gradle.user.patch.ForgeUserPlugin
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -26,14 +25,12 @@ class FG12MappingProvider : MappingProvider {
     ): Map<String, String> {
         val location =
             DelayedFile(project, "{MCP_DATA_DIR}", project.plugins.getPlugin(ForgeUserPlugin::class.java)).call()
-        if (!location.isDirectory) {
-            val task = project.tasks.getByName("genSrgs") as GenSrgTask
+        if (!location.isDirectory)
             try {
-                task.doTask()
+                MappingProvider.executeTask(project.tasks.getByName("genSrgs"))
             } catch (e: IOException) {
                 throw GradleException("Error while creating ForgeGradle mappings", e)
             }
-        }
         return MappingProvider.loadCSV(
             location.resolve("methods.csv"),
             handlers
