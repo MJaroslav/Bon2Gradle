@@ -4,11 +4,6 @@ plugins {
 
 afterEvaluate {
     publishing {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                from(components["java"])
-            }
-        }
         repositories {
             maven {
                 name = "JitCI" // JitCI internal repository with fallback
