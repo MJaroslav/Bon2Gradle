@@ -13,6 +13,8 @@ class Deobfuscator(
     private val mappings: Map<String, String>,
     private val defaultHandlers: Bon2Handlers = SysErrBon2Handlers()
 ) {
+    private var loadedMappings: Map<String, String>? = null
+
     fun remap(
         inJar: File,
         outJar: File,
@@ -23,24 +25,8 @@ class Deobfuscator(
         if (!outJar.parentFile.isDirectory) outJar.parentFile.mkdirs()
         val currentHandlers = if (parallel) handlers.copy() else handlers
         if (mappingsName.isNotBlank()) {
-            // TODO: Make this lazy
-            // TODO: Or maybe use Gradle Dependency API for downloading mappings?
-            val version = MappingVersions.getFromString(mappingsName)
-            val target = version.target
-            val url = BONUtils.toUrl(version.url)
-            try {
-                currentHandlers.startWithoutProgress("Downloading ${target.name}")
-                if (!DownloadUtils.downloadWithCache(url, target, false, false, currentHandlers)) {
-                    if (target.exists()) target.delete()
-                    currentHandlers.handleError("Failed to download: $url to ${target.absolutePath}", false)
-                }
-            } catch (e: Exception) {
-                if (target.exists()) target.delete()
-                currentHandlers.handleError("Failed to download: $url to ${target.absolutePath}", false)
-                throw GradleScriptException("Failed when remapping file ${inJar.absolutePath}", e)
-            }
-            val loadedMappings = loadMappings(version.target, currentHandlers)
-            remap(loadedMappings, inJar, outJar, currentHandlers, reverse)
+            loadMappings(handlers)
+            remap(loadedMappings!!, inJar, outJar, currentHandlers, reverse)
         } else if (mappings.isNotEmpty())
             remap(mappings, inJar, outJar, currentHandlers, reverse)
         else throw IllegalArgumentException("No mappings provided")
@@ -58,10 +44,27 @@ class Deobfuscator(
         JarUtils.writeToJar(classes, outJar, remapper, handlers)
     }
 
-    private fun loadMappings(mappings: File, handlers: Bon2Handlers): Map<String, String> =
-        loadMappings(mappings, "fields.csv", handlers) + loadMappings(mappings, "methods.csv", handlers)
+    private fun loadMappings(handlers: Bon2Handlers) {
+        if (loadedMappings != null) return
+        // TODO: Maybe use Gradle Dependency API for downloading mappings?
+        val version = MappingVersions.getFromString(mappingsName)
+        val target = version.target
+        val url = BONUtils.toUrl(version.url)
+        try {
+            handlers.startWithoutProgress("Downloading ${target.name}")
+            if (!DownloadUtils.downloadWithCache(url, target, false, false, handlers)) {
+                if (target.exists()) target.delete()
+                handlers.handleError("Failed to download: $url to ${target.absolutePath}", false)
+            }
+        } catch (e: Exception) {
+            if (target.exists()) target.delete()
+            throw GradleScriptException("Failed to download: $url to ${target.absolutePath}", e)
+        }
+        val file = version.target
+        loadedMappings = loadCSVFromZip(file, "fields.csv", handlers) + loadCSVFromZip(file, "methods.csv", handlers)
+    }
 
-    private fun loadMappings(zip: File, entry: String, handlers: Bon2Handlers): Map<String, String> {
+    private fun loadCSVFromZip(zip: File, entry: String, handlers: Bon2Handlers): Map<String, String> {
         val lines =
             String(IOUtils.getZipData(zip, entry), StandardCharsets.UTF_8).lines().drop(1).filter { it.isNotBlank() }
         handlers.start(lines.size - 1, "Loading mappings from CSV file $entry in zip $zip")

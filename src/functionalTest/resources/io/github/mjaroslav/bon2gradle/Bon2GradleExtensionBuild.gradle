@@ -36,3 +36,9 @@ minecraft {
 dependencies {
     implementation bon2.deobf("curse.maven:hardcore-ender-expansion-228015:2316923")
 }
+
+buildCache {
+    local {
+        directory %s
+    }
+}

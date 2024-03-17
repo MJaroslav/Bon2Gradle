@@ -5,9 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `deobf` function variant with Closure for "pure" dependency.
+- `deobf` function with Dependency object as argument.
+- Clean tasks:
+  - `cleanDeobfCache` - remove all deobfuscated artifacts cache (just run next two tasks).
+  - `cleanLocalDeobfCache` - remove local (in project build directory) deobfuscated artifacts cache.
+  - `cleanGlobalDeobfCache` - remove global (in Gradle home caches) deobfuscated artifacts cache.
+- Deobfuscated dependencies now have version
+  suffix: `_deobfuscated_with_{MAPPINGS_CHANNEL}_{MAPPINGS_VERSION}-{MC_VERSION}` for "pure" artifacts
+  and `_deobfuscated_with_DIRTY` for "dirty" artifacts.
+- Now deobfuscated artifacts location contains subdirectories with group, name and version like as in maven.
+- [Bon2Task](src/main/kotlin/tasks/Bon2Task.kt) now have "reverse" option (maybe buggy).
+- All deobfuscation performs after project evaluation or on resolve request (extension option).
+- Extension option for forcing saving all deobfuscated artifacts locally in project (mark all as "dirty").
+
+### Fixed
+
+- Issue [#1](https://github.com/MJaroslav/Bon2Gradle/issues/1) (ignoring :: references on remapping) by
+  using [GTNewHorizons/BON2](https://github.com/GTNewHorizons/BON2)
+  fork.
+
+### Changed
+
+- Support Gradle 8.5 (tested).
+- `deobf` function now create `Dependency` object instead of `Provider<Dependency>`.
+- [MappingProvider](src/main/kotlin/api/MappingProvider.kt):
+  - Some helper functions: CSV file to `Map<String, String>` parser and task executor.
+  - Now contains two functions: one for "pure" mapping name and second for "dirty" mapping `Map<String, String>`.
+    "pure" has a higher priority than "dirty" function.
+- `force` options in extension changed like as MappingProvider.
+- Maximum abstraction from Internal classes (but not fully).
+- Some additions in tests.
+
+### Removed
+
+- Internal implementation of `Provider<Dependency>`.
+
 ## [0.4.0] - 2022-10-17
 
-### Edited
+### Changed
 
 - Full switch to using kotlin as build script and source language.
 
@@ -29,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parallel dependency deobfuscation.
   - With toggle option in `bon2` extension.
 
-### Edited
+### Changed
 
 - Package structure refactor.
 - Using GradleException based exceptions in "dependency resolving/deobfuscation code".

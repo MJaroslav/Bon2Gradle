@@ -193,7 +193,8 @@ abstract class Bon2GradleExtension @Inject constructor(private val project: Proj
      */
     fun getCacheDir(): File =
         if (isPureMappings())
-            project.gradle.gradleUserHomeDir.resolve(GLOBAL_CACHE_DIRECTORY).resolve(getMappingsName())
+            project.gradle.gradleUserHomeDir.resolve("caches").resolve(GLOBAL_CACHE_DIRECTORY)
+                .resolve(getMappingsName())
         else
             project.layout.buildDirectory.get().asFile.resolve(LOCAL_CACHE_DIRECTORY)
 
