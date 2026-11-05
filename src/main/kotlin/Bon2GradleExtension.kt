@@ -17,6 +17,7 @@ import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import java.io.File
 import javax.inject.Inject
 
@@ -111,18 +112,6 @@ abstract class Bon2GradleExtension @Inject constructor(private val project: Proj
         }
     }
 
-
-    /**
-     * Deobfuscate dependency with parameters from this extension.
-     *
-     * Pay attention that you should use `flatDir` instead of `files(...)` if you want to use files with this function.
-     *
-     * @param identifier dependency identifier like as usually
-     *
-     * @return deobfuscated dependency or obfuscated if failure.
-     */
-    fun deobf(identifier: Any): Dependency = deobf(project.dependencies.create(identifier))
-
     /**
      * Deobfuscate dependency with parameters from this extension with provided [Closure].
      *
@@ -147,13 +136,17 @@ abstract class Bon2GradleExtension @Inject constructor(private val project: Proj
      * @return deobfuscated dependency or obfuscated if failure.
      */
     // Dependency type warnings from ForgeGradle6
-    fun deobf(dependency: Dependency): Dependency {
-        if (dependency is ExternalModuleDependency)
-            return DeobfuscatedDependency(project, dependency)
+    fun deobf(dependency: Any): Dependency {
+        val actualDependency = if(dependency is Provider<*>) dependency.get() else dependency
+        if (actualDependency is ExternalModuleDependency)
+            return DeobfuscatedDependency(project, actualDependency)
         else if (dependency is FileCollectionDependency)
             project.logger.warn("files(...) dependencies are not deobfuscated. Use flatDir repository instead: https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver")
         project.logger.warn("Cannot deobfuscate dependency of type ${dependency::class.java.simpleName}, using obfuscated version!")
-        return dependency
+        return when (actualDependency) {
+            is Dependency -> actualDependency
+            else -> project.dependencies.create(actualDependency) // Крайний случай
+        }
     }
 
     /**

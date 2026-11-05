@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-05
+
+### Added
+
+- `deobf` functions supports Dependency Providers now.
+
 ## [0.5.0] - 2024-03-18
 
 ### Added
@@ -91,6 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bon2Task for use BON2 in Gradle.
 
 [unreleased]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.5.0...HEAD
+
+[0.6.0]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.5.0...v0.6.0
 
 [0.5.0]: https://github.com/MJaroslav/Bon2Gradle/compare/v0.4.0...v0.5.0
 
