@@ -48,7 +48,10 @@ tasks.register<Test>("functionalTest") {
     group = "verification"
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
+    systemProperty("test.local.repo", rootProject.layout.buildDirectory.dir("functional-test-repository").get().asFile.absolutePath)
+    systemProperty("test.version", rootProject.version.toString())
     useJUnitPlatform()
+    dependsOn("publishAllPublicationsToFunctionalTestRepository")
     mustRunAfter("test")
 }
 

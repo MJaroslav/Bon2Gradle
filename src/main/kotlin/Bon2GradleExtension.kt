@@ -137,7 +137,12 @@ abstract class Bon2GradleExtension @Inject constructor(private val project: Proj
      */
     // Dependency type warnings from ForgeGradle6
     fun deobf(dependency: Any): Dependency {
-        val actualDependency = if(dependency is Provider<*>) dependency.get() else dependency
+        val actualDependency =
+            when (dependency) {
+                is Provider<*> -> dependency.get()
+                is String -> project.dependencies.create(dependency)
+                else -> dependency
+            }
         if (actualDependency is ExternalModuleDependency)
             return DeobfuscatedDependency(project, actualDependency)
         else if (dependency is FileCollectionDependency)

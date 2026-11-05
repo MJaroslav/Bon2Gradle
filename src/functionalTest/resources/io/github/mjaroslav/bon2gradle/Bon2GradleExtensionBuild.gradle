@@ -1,3 +1,4 @@
+//file:noinspection GrPackage
 buildscript {
     repositories {
         mavenCentral()
@@ -5,12 +6,17 @@ buildscript {
             name 'forge'
             url 'https://maven.minecraftforge.net/'
         }
+        maven { url = uri(System.getProperty("test.local.repo")) }
+        maven {
+            name 'jitpack'
+            url = "https://jitpack.io"
+        }
     }
     dependencies {
         classpath('com.anatawa12.forge:ForgeGradle:1.2-1.1.+') {
             changing = true
         }
-        classpath files(%s)
+        classpath("io.github.mjaroslav:Bon2Gradle:${System.getProperty("test.version")}")
     }
 }
 

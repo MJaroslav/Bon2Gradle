@@ -1,11 +1,13 @@
 package io.github.mjaroslav.bon2gradle
 
-import io.github.mjaroslav.bon2gradle.test.functional.GradleUtils
 import io.github.mjaroslav.bon2gradle.test.shared.IOUtils
 import io.github.mjaroslav.bon2gradle.test.shared.PACKAGE
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
@@ -21,16 +23,11 @@ class Bon2GradleExtensionFunctionalTest {
     fun beforeAll(@TempDir projectDir: File) {
         this.projectDir = projectDir
         buildScript = projectDir.resolve("build.gradle")
-        cacheDir = projectDir.resolve("local-cache")
+        cacheDir = projectDir.parentFile.resolve(".testkit")
         heeDeobfFile =
             cacheDir.resolve("caches").resolve("bon2gradle").resolve("stable_12-1.7.10").resolve("curse.maven")
                 .resolve("hardcore-ender-expansion-228015").resolve("2316923")
                 .resolve("hardcore-ender-expansion-228015-2316923.jar")
-    }
-
-    @AfterEach
-    fun afterEach() {
-        cacheDir.deleteRecursively()
     }
 
     @Test
@@ -56,14 +53,17 @@ class Bon2GradleExtensionFunctionalTest {
 
     private fun deobf(version: String, checkCache: Boolean, refresh: Boolean) {
         val runner = GradleRunner.create()
-        runner.withPluginClasspath()
-        var script: String = IOUtils.readStringFromResources(PACKAGE + "Bon2GradleExtensionBuild.gradle")
-        script = String.format(script, GradleUtils.getClasspathString(runner), cacheDir)
-        IOUtils.writeString(buildScript, script)
+        IOUtils.writeString(buildScript, IOUtils.readStringFromResources(PACKAGE + "Bon2GradleExtensionBuild.gradle"))
         runner.forwardOutput()
         runner.withTestKitDir(cacheDir)
         runner.withGradleVersion(version)
-        val args = mutableListOf("dependencies", "--stacktrace", "--info")
+        val args = mutableListOf(
+            "dependencies",
+            "--stacktrace",
+            "--info",
+            "-Dtest.local.repo=${System.getProperty("test.local.repo")}",
+            "-Dtest.version=${System.getProperty("test.version")}"
+        )
         if (refresh) args += "--refresh-dependencies"
         runner.withArguments(args)
         runner.withProjectDir(projectDir)
